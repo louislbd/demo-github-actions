@@ -1,1 +1,1 @@
-INSERT INTO table_dev (name) values ("KEN");
+INSERT INTP table_dev (name) values ("KEN");
