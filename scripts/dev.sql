@@ -1,1 +1,1 @@
-INSERT INRO table_dev (name) values ("KEN");
+INSERT INTO table_dev (name) values ("La dame de Dang");
