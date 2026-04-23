@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.build_step.outputs.artifact_name }}
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
@@ -28,3 +30,34 @@ jobs:
         with:
           name: ${{ steps.build_step.outputs.artifact_name }}
           path: scripts/*.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 'Download Artifact'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: artifact
+
+      - name: 'Extract Artifact'
+        run: unzip artifact/*.zip -d extracted
+
+      - name: 'Install Postgresql'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: 'Execute SQL'
+        run: |
+           export PGPASSWORD="$SUPABASE_PASSWORD"
+             psql -h "$SUPABASE_HOST" \
+                 -p 5432 \
+                 -d postgres \
+                 -U "$SUPABASE_USER" \
+                 -f extracted/scripts/dev.sql
+        env:
+          SUPABASE_HOST: aws-1-eu-central-1.pooler.supabase.com
+          SUPABASE_USER: postgres.qxqpncxzbiuhsodhgmwk
+          SUPABASE_PASSWORD: demogha2026
