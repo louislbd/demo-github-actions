@@ -1,1 +1,1 @@
-INSERT INTO table_dev (name) values ("La dame de Dang");
+INSERT INTO table_dev (name) VALUES ("La dame de Dang");
